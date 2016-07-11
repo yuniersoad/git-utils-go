@@ -6,6 +6,7 @@ import (
 	"gopkg.in/src-d/go-git.v3/utils/fs"
 	"io"
 	"os"
+	"regexp"
 	"sort"
 )
 
@@ -19,7 +20,6 @@ func main() {
 	repo := "./repo/.git"
 	arg := os.Args[1]
 	getcommits(repo, arg)
-	fmt.Println(arg)
 }
 
 func getcommits(repoPath string, tagName string) {
@@ -31,6 +31,7 @@ func getcommits(repoPath string, tagName string) {
 		panic(err)
 	}
 
+	fmt.Println("aki es!!!!!!")
 	iter, err := repo.Tags()
 	if err != nil {
 		panic(err)
@@ -49,5 +50,26 @@ func getcommits(repoPath string, tagName string) {
 
 	}
 	sort.Sort(tags)
-	fmt.Println(tags)
+
+	index := -1
+	for i, tag := range tags {
+		if tag.Name == tagName {
+			index = i
+			break
+		}
+	}
+	fmt.Println(index)
+	co1, _ := tags[index].Commit()
+	co2, _ := tags[index-1].Commit()
+
+	for {
+		regexAuthyTicket := regexp.MustCompile(`(AUTHYC-\d+)`)
+		ticketId := regexAuthyTicket.FindStringSubmatch(co1.Message)[1]
+		fmt.Println(ticketId)
+		piter := co1.Parents()
+		co1, _ = piter.Next()
+		if co1.ID() == co2.ID() {
+			break
+		}
+	}
 }

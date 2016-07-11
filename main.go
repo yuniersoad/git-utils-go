@@ -31,7 +31,6 @@ func getcommits(repoPath string, tagName string) {
 		panic(err)
 	}
 
-	fmt.Println("aki es!!!!!!")
 	iter, err := repo.Tags()
 	if err != nil {
 		panic(err)
